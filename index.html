@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -31,58 +31,15 @@
     <div id="gameOver">Game Over! Press Enter to Restart.</div>
 
     <script>
-        // Инициализация канваса
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
-        const scale = 20; // Размер блока
+        const scale = 20;
         const rows = canvas.height / scale;
         const columns = canvas.width / scale;
 
         let snake;
         let food;
         let gameOver = false;
-
-        function init() {
-            snake = new Snake();
-            food = new Food();
-            food.createFood();
-            gameOver = false;
-            document.getElementById("gameOver").style.display = 'none';
-
-            window.addEventListener("keydown", e => {
-                if (e.key === "Enter" && gameOver) {
-                    init(); // Перезапуск игры
-                }
-                if (gameOver) return;
-                if (e.key === "ArrowUp") snake.changeDirection("Up");
-                if (e.key === "ArrowDown") snake.changeDirection("Down");
-                if (e.key === "ArrowLeft") snake.changeDirection("Left");
-                if (e.key === "ArrowRight") snake.changeDirection("Right");
-            });
-
-            gameLoop();
-        }
-
-        function gameLoop() {
-            if (gameOver) return;
-            setTimeout(() => {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
-                snake.move();
-                snake.draw();
-                food.draw();
-
-                if (snake.eat(food)) {
-                    food.createFood();
-                }
-
-                if (snake.checkCollision()) {
-                    gameOver = true;
-                    document.getElementById("gameOver").style.display = 'block';
-                }
-
-                gameLoop();
-            }, 100);
-        }
 
         class Snake {
             constructor() {
@@ -108,7 +65,7 @@
                 this.snakeArray.unshift(head);
 
                 if (!this.eat(food)) {
-                    this.snakeArray.pop(); // Удаляем последний элемент, если не съели еду
+                    this.snakeArray.pop();
                 }
             }
 
@@ -121,35 +78,29 @@
 
             eat(food) {
                 let head = this.snakeArray[0];
-                if (head.x === food.x && head.y === food.y) {
-                    return true; // Увеличиваем длину змейки
-                }
-                return false;
+                return head.x === food.x && head.y === food.y;
             }
 
             checkCollision() {
                 let head = this.snakeArray[0];
 
-                // Проверяем, не вышла ли змейка за границы
                 if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
-                    return true; // Границы экрана
+                    return true;
                 }
 
-                // Проверяем, не столкнулась ли змейка сама с собой
                 for (let i = 1; i < this.snakeArray.length; i++) {
                     if (head.x === this.snakeArray[i].x && head.y === this.snakeArray[i].y) {
-                        return true; // Столкновение с собственным телом
+                        return true;
                     }
                 }
 
-                return false; // Всё нормально, игра продолжается
+                return false;
             }
         }
 
         class Food {
             constructor() {
-                this.x;
-                this.y;
+                this.createFood();
             }
 
             createFood() {
@@ -163,9 +114,48 @@
             }
         }
 
+        function init() {
+            snake = new Snake();
+            food = new Food();
+            gameOver = false;
+            document.getElementById("gameOver").style.display = 'none';
+
+            window.addEventListener("keydown", e => {
+                if (e.key === "Enter" && gameOver) {
+                    init();
+                }
+                if (gameOver) return;
+                if (e.key === "ArrowUp") snake.changeDirection("Up");
+                if (e.key === "ArrowDown") snake.changeDirection("Down");
+                if (e.key === "ArrowLeft") snake.changeDirection("Left");
+                if (e.key === "ArrowRight") snake.changeDirection("Right");
+            });
+
+            requestAnimationFrame(gameLoop);
+        }
+
+        function gameLoop() {
+            if (gameOver) return;
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            snake.move();
+            snake.draw();
+            food.draw();
+
+            if (snake.eat(food)) {
+                food.createFood();
+            }
+
+            if (snake.checkCollision()) {
+                gameOver = true;
+                document.getElementById("gameOver").style.display = 'block';
+            } else {
+                requestAnimationFrame(gameLoop);
+            }
+        }
+
         init();
 
-        // Telegram Web App SDK
         if (window.Telegram.WebApp) {
             const telegram = window.Telegram.WebApp;
             telegram.ready();
