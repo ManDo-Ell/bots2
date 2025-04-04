@@ -131,18 +131,23 @@
             }
 
             checkCollision() {
-                let head = this.snakeArray[0];
-                if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
-                    return true;
-                }
-                for (let i = 1; i < this.snakeArray.length; i++) {
-                    if (head.x === this.snakeArray[i].x && head.y === this.snakeArray[i].y) {
-                        return true;
-                    }
-                }
-                return false;
-            }
+    let head = this.snakeArray[0];
+
+    // Проверяем, не вышла ли змейка за границы
+    if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
+        return true; // Границы экрана
+    }
+
+    // Проверяем, не столкнулась ли змейка сама с собой
+    for (let i = 1; i < this.snakeArray.length; i++) {
+        if (head.x === this.snakeArray[i].x && head.y === this.snakeArray[i].y) {
+            return true; // Столкновение с собственным телом
         }
+    }
+
+    return false; // Всё нормально, игра продолжается
+}
+
 
         // Еда
         class Food {
