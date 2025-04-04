@@ -40,3 +40,58 @@
             display: none;
         }
     </style>
+</head>
+<body>
+    <div id="clickerContainer">
+        <div id="cube"></div>
+        <div id="score">Нажатий: 0</div>
+    </div>
+    <div id="gameOver">Игра окончена! Нажмите на куб, чтобы начать заново.</div>
+
+    <script>
+        let score = 0;
+
+        const cube = document.getElementById('cube');
+        const scoreDisplay = document.getElementById('score');
+        const gameOverDisplay = document.getElementById('gameOver');
+
+        // Функция для обновления счета
+        function updateScore() {
+            score += 1;
+            scoreDisplay.innerText = `Нажатий: ${score}`;
+        }
+
+        // Обработчик кликов на куб
+        cube.addEventListener('click', () => {
+            if (score >= 10) {
+                // После 10 нажатий игра заканчивается
+                gameOverDisplay.style.display = 'block';
+                cube.style.display = 'none';  // Прячем куб
+                return;
+            }
+            updateScore();
+        });
+
+        // Если нужно перезапустить игру
+        window.addEventListener("keydown", e => {
+            if (e.key === "Enter" && score >= 10) {
+                score = 0;
+                gameOverDisplay.style.display = 'none';
+                cube.style.display = 'block';
+                updateScore();
+            }
+        });
+
+        // Инициализация игры
+        updateScore();
+
+        // Инициализация Telegram Web App
+        if (window.Telegram && window.Telegram.WebApp) {
+            const telegram = window.Telegram.WebApp;
+            telegram.ready();
+        } else {
+            console.error("Telegram Web App не инициализирован!");
+        }
+    </script>
+</body>
+</html>
