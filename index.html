@@ -15,7 +15,7 @@
             margin: 0;
         }
         canvas {
-            border: 1px solid black;
+            border: 2px solid black;
             background-color: white;
         }
         #gameOver {
@@ -31,7 +31,7 @@
     <div id="gameOver">Game Over! Press Enter to Restart.</div>
 
     <script>
-        // Настройка игры
+        // Инициализация канваса
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
         const scale = 20; // Размер блока
@@ -42,13 +42,13 @@
         let food;
         let gameOver = false;
 
-        // Инициализация игры
         function init() {
             snake = new Snake();
             food = new Food();
             food.createFood();
             gameOver = false;
             document.getElementById("gameOver").style.display = 'none';
+
             window.addEventListener("keydown", e => {
                 if (e.key === "Enter" && gameOver) {
                     init(); // Перезапуск игры
@@ -59,10 +59,10 @@
                 if (e.key === "ArrowLeft") snake.changeDirection("Left");
                 if (e.key === "ArrowRight") snake.changeDirection("Right");
             });
+
             gameLoop();
         }
 
-        // Основной игровой цикл
         function gameLoop() {
             if (gameOver) return;
             setTimeout(() => {
@@ -70,18 +70,20 @@
                 snake.move();
                 snake.draw();
                 food.draw();
+
                 if (snake.eat(food)) {
                     food.createFood();
                 }
+
                 if (snake.checkCollision()) {
                     gameOver = true;
                     document.getElementById("gameOver").style.display = 'block';
                 }
+
                 gameLoop();
             }, 100);
         }
 
-        // Змейка
         class Snake {
             constructor() {
                 this.snakeArray = [{ x: 5, y: 5 }];
@@ -96,60 +98,54 @@
             }
 
             move() {
-                let head = Object.assign({}, this.snakeArray[0]);
+                let head = { ...this.snakeArray[0] };
+
                 if (this.direction === "Up") head.y -= 1;
                 if (this.direction === "Down") head.y += 1;
                 if (this.direction === "Left") head.x -= 1;
                 if (this.direction === "Right") head.x += 1;
 
                 this.snakeArray.unshift(head);
-                this.snakeArray.pop();
+
+                if (!this.eat(food)) {
+                    this.snakeArray.pop(); // Удаляем последний элемент, если не съели еду
+                }
             }
 
             changeDirection(direction) {
-                if (direction === "Up" && this.direction !== "Down") {
-                    this.direction = "Up";
-                }
-                if (direction === "Down" && this.direction !== "Up") {
-                    this.direction = "Down";
-                }
-                if (direction === "Left" && this.direction !== "Right") {
-                    this.direction = "Left";
-                }
-                if (direction === "Right" && this.direction !== "Left") {
-                    this.direction = "Right";
-                }
+                if (direction === "Up" && this.direction !== "Down") this.direction = "Up";
+                if (direction === "Down" && this.direction !== "Up") this.direction = "Down";
+                if (direction === "Left" && this.direction !== "Right") this.direction = "Left";
+                if (direction === "Right" && this.direction !== "Left") this.direction = "Right";
             }
 
             eat(food) {
                 let head = this.snakeArray[0];
                 if (head.x === food.x && head.y === food.y) {
-                    this.snakeArray.push({ x: head.x, y: head.y });
-                    return true;
+                    return true; // Увеличиваем длину змейки
                 }
                 return false;
             }
 
             checkCollision() {
-    let head = this.snakeArray[0];
+                let head = this.snakeArray[0];
 
-    // Проверяем, не вышла ли змейка за границы
-    if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
-        return true; // Границы экрана
-    }
+                // Проверяем, не вышла ли змейка за границы
+                if (head.x < 0 || head.x >= columns || head.y < 0 || head.y >= rows) {
+                    return true; // Границы экрана
+                }
 
-    // Проверяем, не столкнулась ли змейка сама с собой
-    for (let i = 1; i < this.snakeArray.length; i++) {
-        if (head.x === this.snakeArray[i].x && head.y === this.snakeArray[i].y) {
-            return true; // Столкновение с собственным телом
+                // Проверяем, не столкнулась ли змейка сама с собой
+                for (let i = 1; i < this.snakeArray.length; i++) {
+                    if (head.x === this.snakeArray[i].x && head.y === this.snakeArray[i].y) {
+                        return true; // Столкновение с собственным телом
+                    }
+                }
+
+                return false; // Всё нормально, игра продолжается
+            }
         }
-    }
 
-    return false; // Всё нормально, игра продолжается
-}
-
-
-        // Еда
         class Food {
             constructor() {
                 this.x;
@@ -167,14 +163,11 @@
             }
         }
 
-        // Инициализация игры
         init();
 
-        // Интеграция с Telegram Web App SDK
+        // Telegram Web App SDK
         if (window.Telegram.WebApp) {
             const telegram = window.Telegram.WebApp;
-
-            // Настроим Web App
             telegram.ready();
         }
     </script>
