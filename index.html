@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Telegram Web App</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #0088cc;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Telegram Web App</h1>
+    <p>This is a simple web app embedded in Telegram.</p>
+    <button id="sendMessageButton">Send Message</button>
+
+    <script>
+        // Проверка доступности Telegram Web App SDK
+        if (window.Telegram.WebApp) {
+            // Настройка Web App
+            const telegram = window.Telegram.WebApp;
+
+            // Пример обработки нажатия кнопки
+            document.getElementById("sendMessageButton").addEventListener("click", function() {
+                telegram.sendData("Hello from Web App!");
+            });
+
+            // Развертывание Web App
+            telegram.ready();
+        }
+    </script>
+</body>
+</html>
