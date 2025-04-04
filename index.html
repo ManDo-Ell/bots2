@@ -36,6 +36,7 @@
         const scale = 20;
         const rows = canvas.height / scale;
         const columns = canvas.width / scale;
+        let snakeSpeed = 150; // Скорость змейки в миллисекундах
 
         let snake;
         let food;
@@ -131,7 +132,7 @@
                 if (e.key === "ArrowRight") snake.changeDirection("Right");
             });
 
-            requestAnimationFrame(gameLoop);
+            gameLoop();
         }
 
         function gameLoop() {
@@ -150,7 +151,7 @@
                 gameOver = true;
                 document.getElementById("gameOver").style.display = 'block';
             } else {
-                requestAnimationFrame(gameLoop);
+                setTimeout(gameLoop, snakeSpeed); // Контролируем скорость через setTimeout
             }
         }
 
@@ -161,5 +162,4 @@
             telegram.ready();
         }
     </script>
-</body>
-</html>
+</body
