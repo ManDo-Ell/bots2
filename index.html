@@ -49,7 +49,7 @@
     <div id="gameOver">Игра окончена! Нажмите на куб, чтобы начать заново.</div>
 
     <script>
-        let score = 0;
+        let score = localStorage.getItem("score") ? parseInt(localStorage.getItem("score")) : 0;
 
         const cube = document.getElementById('cube');
         const scoreDisplay = document.getElementById('score');
@@ -59,11 +59,12 @@
         function updateScore() {
             score += 1;
             scoreDisplay.innerText = `Нажатий: ${score}`;
+            localStorage.setItem("score", score); // Сохраняем новый счет в localStorage
         }
 
         // Обработчик кликов на куб
         cube.addEventListener('click', () => {
-            if (score >= 99999999999) {
+            if (score >= 10) {
                 // После 10 нажатий игра заканчивается
                 gameOverDisplay.style.display = 'block';
                 cube.style.display = 'none';  // Прячем куб
@@ -74,8 +75,9 @@
 
         // Если нужно перезапустить игру
         window.addEventListener("keydown", e => {
-            if (e.key === "Enter" && score >= 99999999999) {
+            if (e.key === "Enter" && score >= 10) {
                 score = 0;
+                localStorage.setItem("score", score); // Сбрасываем счет в localStorage
                 gameOverDisplay.style.display = 'none';
                 cube.style.display = 'block';
                 updateScore();
@@ -88,7 +90,12 @@
         // Инициализация Telegram Web App
         if (window.Telegram && window.Telegram.WebApp) {
             const telegram = window.Telegram.WebApp;
+
+            // Готовность Telegram Web App
             telegram.ready();
+
+            // Получение информации о Web App, если необходимо
+            console.log("Telegram Web App инициализирован.");
         } else {
             console.error("Telegram Web App не инициализирован!");
         }
