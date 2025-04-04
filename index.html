@@ -74,7 +74,7 @@
 
         // Если нужно перезапустить игру
         window.addEventListener("keydown", e => {
-            if (e.key === "Enter" && score >= 10) {
+            if (e.key === "Enter" && score >= 99999999999) {
                 score = 0;
                 gameOverDisplay.style.display = 'none';
                 cube.style.display = 'block';
